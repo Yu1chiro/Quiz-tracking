@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Tracking App</title>
+  <link rel="shortcut icon" href="/ico.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-500 flex items-center justify-center min-h-screen">
+  <div id="mobile-first" class="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
+    <header class="bg-blue-600 p-4 flex items-center">
+      <img src="/ico.png" class="w-10 h-10 mr-3"></img>
+      <h1 class="text-lg font-semibold text-white">Quiz Tracking App</h1>
+    </header>
+    <main class="p-6">
+      <h2 class="text-center text-xl font-semibold text-gray-800 mb-6">Please input your Name & Nim for started the Quiz</h2>
+      <form id="sign-quiz" class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">Full Name:</label>
+          <input
+            id="nama-lengkap"
+            type="text"
+            placeholder="Input your Full Name"
+            class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label for="nim-mahasiswa" class="block text-sm font-medium text-gray-700">Student NIM:</label>
+          <input
+            id="nim-mahasiswa"
+            type="text"
+            placeholder="Input your NIM"
+            class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label for="kode-kuis" class="block text-sm font-medium text-gray-700">Access Code:</label>
+          <input
+            id="kode-kuis"
+            type="text"
+            placeholder="Input access code"
+            class="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300"
+        >
+          Start Quiz
+        </button>
+      </form>
+    </main>
+    <footer class="bg-gray-100 text-center p-4">
+      <p class="text-xs text-gray-600">Created by Yuichiro | All rights reserved 2024</p>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="/service.js"></script>
+  <script src="view.js"></script>
+</body>
+</html>
