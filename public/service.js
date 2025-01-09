@@ -398,7 +398,7 @@ getFirebaseConfig().then(firebaseConfig => {
             window.addEventListener('beforeunload', () => {
                 clearInterval(statusInterval);
                 update(userStatusRef, {
-                    status: "user menclose browser",
+                    status: "User dikeluarkan oleh sistem",
                     isOnline: false,
                     lastActive: Date.now()
                 });
@@ -420,7 +420,7 @@ getFirebaseConfig().then(firebaseConfig => {
                 const snapshot = await get(userStatusRef);
                 if (snapshot.exists()) {
                     const status = snapshot.val().status;
-                    if (status === "user menclose browser") {
+                    if (status === "User dikeluarkan oleh sistem") {
                         redirectToHome("Anda terdeteksi menutup browser, mohon menunggu 3 detik");
                     } else if (status === "user membuka tab lain") {
                         redirectToHome("Anda terdeteksi membuka tab lain, mohon menunggu 3 detik");
