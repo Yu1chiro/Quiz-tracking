@@ -248,7 +248,29 @@ getFirebaseConfig().then(firebaseConfig => {
                     e.preventDefault();
                 }
             });
+               // Menambahkan deteksi orientasi layar
+    if (window.screen.orientation) {
+        window.screen.orientation.addEventListener('change', function() {
+            if (window.screen.orientation.angle !== 0) {
+                redirectToHome("Split screen tidak diizinkan. Harap gunakan orientasi portrait");
+                try {
+                    window.screen.orientation.lock('portrait');
+                } catch (error) {
+                    console.log("Orientasi tidak dapat dikunci:", error);
+                }
+            }
+        });
+    }
 
+    // Menambahkan deteksi rasio layar untuk split screen
+    const checkSplitScreen = () => {
+        if (window.innerHeight / window.innerWidth < 1.2) {
+            redirectToHome("Access Denied ! Anda terdeteksi melakukan kecurangan");
+        }
+    };
+
+    window.addEventListener("resize", checkSplitScreen);
+    checkSplitScreen(); // Cek saat pertama kali dimuat
             // Prevent screenshots on mobile
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                 // Disable screenshot capabilities
@@ -291,7 +313,7 @@ getFirebaseConfig().then(firebaseConfig => {
                     width="100%" 
                     height="${iframeHeight}px" 
                     frameborder="0"
-                    style="max-width: 800px; margin: 0 auto; display: block; pointer-events: auto;"
+                    style="margin: 0 auto; display: block; pointer-events: auto;"
                     class="quiz-iframe"
                     sandbox="allow-same-origin allow-scripts allow-forms"
                 ></iframe>

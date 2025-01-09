@@ -1,0 +1,41 @@
+   /* Menutupi Google Form dengan overlay tetapi tetap memungkinkan scroll */
+   .iframe-container {
+    position: relative;
+    width: 100%;
+    height: 1030px;
+}
+
+.iframe-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7); /* Menutupi form dengan transparansi */
+    z-index: 2;
+    pointer-events: none; /* Overlay tidak menghalangi scroll */
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto; /* Membuat iframe dapat di-scroll */
+}
+
+/* Menonaktifkan pemilihan teks di seluruh halaman */
+* {
+    user-select: none; /* Menonaktifkan seleksi teks */
+}
+
+/* Untuk iframe, memastikan tidak ada pemilihan teks */
+iframe {
+    -webkit-user-select: none; /* Menonaktifkan pemilihan teks */
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Menonaktifkan input dan interaksi dengan elemen input */
+iframe, .iframe-overlay {
+    pointer-events: none; /* Menonaktifkan interaksi langsung dengan iframe */
+}
