@@ -137,8 +137,7 @@ getFirebaseConfig().then(firebaseConfig => {
 
             try {
                 Swal.fire({
-                    title: 'Memproses...',
-                    text: 'Mohon tunggu sebentar',
+                    title: 'Memuat Quiz',
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     didOpen: () => Swal.showLoading()
@@ -371,7 +370,7 @@ getFirebaseConfig().then(firebaseConfig => {
                     });
 
                     onDisconnect(userStatusRef).update({
-                        status: "user menclose browser",
+                        status: "User dikeluarkan oleh sistem",
                         isOnline: false,
                         lastActive: Date.now()
                     });
@@ -381,7 +380,7 @@ getFirebaseConfig().then(firebaseConfig => {
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
                     update(userStatusRef, {
-                        status: "user membuka tab lain",
+                        status: "User terdeteksi membuka tab/browsing",
                         lastActive: Date.now()
                     });
                     redirectToHome("Anda terdeteksi membuka tab lain, mohon menunggu 3 detik");
