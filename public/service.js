@@ -264,7 +264,7 @@ getFirebaseConfig().then(firebaseConfig => {
     // Menambahkan deteksi rasio layar untuk split screen
     const checkSplitScreen = () => {
         if (window.innerHeight / window.innerWidth < 1.2) {
-            redirectToHome("Access Denied ! Anda terdeteksi melakukan kecurangan");
+            redirectToHome("Anda terdeteksi melakukan kecurangan");
         }
     };
 
@@ -283,10 +283,13 @@ getFirebaseConfig().then(firebaseConfig => {
             if (!redirectInProgress) {
                 redirectInProgress = true;
                 await Swal.fire({
-                    icon: 'warning',
-                    title: 'Peringatan !',
-                    text: message || 'Anda terdeteksi melakukan aktivitas yang tidak diizinkan',
-                    timer: 3000,
+                    html: `
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+                        <p class="font-bold">Access Denied !</p>
+                        <p>${message || 'Anda terdeteksi melakukan aktivitas yang tidak diizinkan.'}</p>
+                    </div>
+                `,
+                    timer: 5000,
                     timerProgressBar: true,
                     showConfirmButton: false
                 });
@@ -359,7 +362,7 @@ getFirebaseConfig().then(firebaseConfig => {
             const userStatusRef = ref(database, `data-mahasiswa/${session.sessionId}`);
             
             enforceSecurityMeasures();
-
+        
             const connectedRef = ref(database, '.info/connected');
             onValue(connectedRef, (snap) => {
                 if (snap.val() === true) {
@@ -368,7 +371,7 @@ getFirebaseConfig().then(firebaseConfig => {
                         isOnline: true,
                         lastActive: Date.now()
                     });
-
+        
                     onDisconnect(userStatusRef).update({
                         status: "User dikeluarkan oleh sistem",
                         isOnline: false,
@@ -376,7 +379,37 @@ getFirebaseConfig().then(firebaseConfig => {
                     });
                 }
             });
-
+        
+            // Fungsi pemeriksaan split screen
+            const checkSplitScreen = () => {
+                if (window.innerHeight / window.innerWidth < 1.2) {
+                    update(userStatusRef, {
+                        status: "User terdeteksi menggunakan split screen",
+                        lastActive: Date.now()
+                    });
+                    redirectToHome("Anda terdeteksi melakukan kecurangan");
+                }
+            };
+        
+            // Menambahkan event listener untuk resize
+            window.addEventListener("resize", checkSplitScreen);
+            
+            // Menambahkan pemeriksaan orientasi layar
+            if (window.screen.orientation) {
+                window.screen.orientation.addEventListener('change', () => {
+                    if (window.screen.orientation.angle !== 0) {
+                        update(userStatusRef, {
+                            status: "User terdeteksi mengubah orientasi layar",
+                            lastActive: Date.now()
+                        });
+                        redirectToHome("Split screen tidak diizinkan. Harap gunakan orientasi portrait");
+                    }
+                });
+            }
+            
+            // Jalankan pemeriksaan awal
+            checkSplitScreen();
+            
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
                     update(userStatusRef, {
@@ -386,7 +419,7 @@ getFirebaseConfig().then(firebaseConfig => {
                     redirectToHome("Anda terdeteksi membuka tab lain, mohon menunggu 3 detik");
                 }
             });
-
+        
             const statusInterval = setInterval(() => {
                 if (!document.hidden) {
                     update(userStatusRef, {
@@ -394,7 +427,7 @@ getFirebaseConfig().then(firebaseConfig => {
                     });
                 }
             }, 30000);
-
+        
             window.addEventListener('beforeunload', () => {
                 clearInterval(statusInterval);
                 update(userStatusRef, {
@@ -404,8 +437,7 @@ getFirebaseConfig().then(firebaseConfig => {
                 });
                 sessionStorage.removeItem('quizSession');
             });
-
-            // Additional security for mobile devices
+        
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                 document.addEventListener('touchstart', (e) => {
                     if (e.touches.length > 1) {
@@ -414,8 +446,7 @@ getFirebaseConfig().then(firebaseConfig => {
                     }
                 }, false);
             }
-
-            // Check user status when returning to the page
+        
             const checkUserStatus = async () => {
                 const snapshot = await get(userStatusRef);
                 if (snapshot.exists()) {
@@ -424,41 +455,38 @@ getFirebaseConfig().then(firebaseConfig => {
                         redirectToHome("Anda terdeteksi menutup browser, mohon menunggu 3 detik");
                     } else if (status === "user membuka tab lain") {
                         redirectToHome("Anda terdeteksi membuka tab lain, mohon menunggu 3 detik");
+                    } else if (status === "User terdeteksi menggunakan split screen") {
+                        redirectToHome("Anda terdeteksi menggunakan split screen, mohon menunggu 3 detik");
                     }
                 }
             };
-
+        
             onValue(userStatusRef, (snapshot) => {
                 if (!snapshot.exists()) {
                     redirectToHome('Data sesi tidak ditemukan. Silakan daftar ulang.');
                     return;
                 }
-
+        
                 const userData = snapshot.val();
-
-                // Check if the user is marked as offline or unauthorized
+        
                 if (!userData.isOnline || userData.status === 'dikeluarkan') {
                     redirectToHome('Sesi Anda telah diakhiri atau Anda tidak diizinkan melanjutkan.');
                 }
             });
-
-            // Update the user's last activity timestamp periodically
+        
             const updateActivity = () => {
                 update(userStatusRef, {
                     lastActive: Date.now()
                 });
             };
-
-            // Trigger the activity update every minute
+        
             const activityInterval = setInterval(updateActivity, 60000);
-
-            // Mark user as offline on disconnect
+        
             onDisconnect(userStatusRef).update({
                 isOnline: false,
                 lastActive: Date.now()
             });
-
-            // Clean up listeners on window unload
+        
             window.addEventListener('beforeunload', () => {
                 clearInterval(activityInterval);
                 update(userStatusRef, { isOnline: false });
